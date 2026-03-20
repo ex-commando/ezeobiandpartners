@@ -1,0 +1,5 @@
+/* Navbar component styles are in index.css global — this file intentionally minimal */
+.mobile-link-cta {
+  color: var(--teal-light) !important;
+  font-weight: 600;
+}
