@@ -9,11 +9,13 @@
 
 .legal-icons-layer.fixed-global {
   position: fixed;
-  z-index: 0; /* behind all page content */
+  z-index: 50; /* Above backgrounds, below most text/modals which have much higher z-index if needed */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  pointer-events: none;
+  opacity: 0.8; /* Let the individual icon opacities dictate the faintness */
 }
 
 .legal-float-icon {
