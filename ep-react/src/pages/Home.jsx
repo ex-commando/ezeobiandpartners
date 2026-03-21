@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView } from 'framer-motion'
-import { Scale, Briefcase, Zap, Shield, Star, Globe, Users, ChevronRight, ArrowRight } from 'lucide-react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { Scale, Briefcase, Zap, Shield, Star, Globe, Users,
+         ChevronRight, ArrowRight, ChevronLeft } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
+import LegalIcons from '../components/LegalIcons'
 import './Home.css'
 
-/* ── Animation helpers ── */
+/* ── animation helpers ── */
 const fadeUp = {
   initial: { opacity: 0, y: 36 },
   animate: (i = 0) => ({
@@ -14,9 +16,9 @@ const fadeUp = {
   })
 }
 
-function Reveal({ children, delay = 0, className = '' }) {
+function Reveal({ children, delay = 0, className = '', style }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const inView = useInView(ref, { once: true, margin: '-70px' })
   return (
     <motion.div
       ref={ref}
@@ -24,14 +26,15 @@ function Reveal({ children, delay = 0, className = '' }) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.65, delay, ease: [0.4, 0, 0.2, 1] }}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>
   )
 }
 
-/* ── Counter hook ── */
-function useCounter(target, duration = 2000, inView) {
+/* ── Counter ── */
+function useCounter(target, duration = 1800, inView) {
   const [count, setCount] = useState(0)
   useEffect(() => {
     if (!inView) return
@@ -61,6 +64,208 @@ function StatItem({ num, suffix = '', label, delay }) {
   )
 }
 
+/* ═══════════════════ HERO SLIDES DATA ═══════════════════ */
+const heroSlides = [
+  {
+    bg: '/hero-bg.png',
+    badge: 'Exclusive Legal Practice · Est. 1989',
+    title: <>Excellence in Law.<br /><em className="hero-title-accent">Unparalleled</em> Counsel.</>,
+    sub: 'Ezeobi & Partners is a distinguished Nigerian law firm born from the need for a truly empowered and exceedingly competent legal practice — offering specialised knowledge and personalised service to clients across Nigeria, Africa, and the World.',
+    cta1: { label: 'Our Practice Areas', to: '/practice' },
+    cta2: { label: 'Get In Touch', to: '/contact' },
+    overlayClass: 'slide-ov-1',
+  },
+  {
+    bg: '/about-img.png',
+    badge: '30+ Years of Distinguished Service',
+    title: <>A Legacy of<br />Legal <em className="hero-title-accent">Excellence.</em></>,
+    sub: 'Founded by Chief Theodore A. Ezeobi SAN, our firm has forged an unrivalled reputation for rigorous advocacy, ethical practice, and genuine commitment to client success — a tradition we proudly uphold to this day.',
+    cta1: { label: 'Discover Our Story', to: '/about' },
+    cta2: { label: 'Meet Our Team', to: '/team' },
+    overlayClass: 'slide-ov-2',
+  },
+  {
+    bg: '/hero-bg.png',
+    badge: 'Offices in Abuja · Lagos · London',
+    title: <>Global Reach.<br /><em className="hero-title-accent">Local</em> Expertise.</>,
+    sub: 'With offices spanning Nigeria and the United Kingdom, Ezeobi & Partners delivers expert legal counsel in General Practice, Business & Commercial Law, and Energy & Natural Resources — wherever your matter demands.',
+    cta1: { label: 'Contact Us Today', to: '/contact' },
+    cta2: { label: 'Our Offices', to: '/about' },
+    overlayClass: 'slide-ov-3',
+  },
+]
+
+const SLIDE_DURATION = 6000 // ms
+
+function HeroSlider() {
+  const [current, setCurrent]     = useState(0)
+  const [direction, setDirection] = useState(1)  // 1 = forward, -1 = backward
+  const [paused, setPaused]       = useState(false)
+  const timerRef = useRef(null)
+  const barRef   = useRef(null)
+
+  const goTo = useCallback((idx, dir = 1) => {
+    const next = ((idx % heroSlides.length) + heroSlides.length) % heroSlides.length
+    setDirection(dir)
+    setCurrent(next)
+  }, [])
+
+  const next = useCallback(() => goTo(current + 1,  1), [current, goTo])
+  const prev = useCallback(() => goTo(current - 1, -1), [current, goTo])
+
+  /* auto-advance */
+  useEffect(() => {
+    if (paused) return
+    timerRef.current = setInterval(next, SLIDE_DURATION)
+    return () => clearInterval(timerRef.current)
+  }, [paused, next])
+
+  /* progress bar reset */
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return
+    bar.style.transition = 'none'
+    bar.style.width = '0%'
+    void bar.offsetWidth // reflow
+    bar.style.transition = `width ${SLIDE_DURATION}ms linear`
+    bar.style.width = '100%'
+  }, [current])
+
+  const slideVariants = {
+    enter:  (dir) => ({ opacity: 0, x: dir > 0 ? 60 : -60 }),
+    center: { opacity: 1, x: 0, transition: { duration: 0.75, ease: [0.4, 0, 0.2, 1] } },
+    exit:   (dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60, transition: { duration: 0.55, ease: [0.4, 0, 0.2, 1] } }),
+  }
+
+  const slide = heroSlides[current]
+
+  return (
+    <section
+      className="home-hero"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* ── Slide backgrounds ── */}
+      <div className="hero-bg-layer">
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={current}
+            className={`hero-slide-bg ${slide.overlayClass}`}
+            initial={{ opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 1, scale: 1,   transition: { duration: 1.2, ease: 'easeOut' } }}
+            exit={{    opacity: 0,              transition: { duration: 0.6 } }}
+          >
+            <img src={slide.bg} alt="" className="hero-bg-img" />
+            <div className="hero-overlay" />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Animated teal orbs */}
+        <div className="hero-orb hero-orb-1" />
+        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-3" />
+      </div>
+
+      {/* ── Legal icons layer ── */}
+      <LegalIcons />
+
+      {/* ── Slide content ── */}
+      <div className="home-hero-content container">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={current}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="hero-slide-content"
+          >
+            <motion.div className="hero-badge"
+              initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.55 }}>
+              {slide.badge}
+            </motion.div>
+
+            <motion.h1 className="hero-title"
+              initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28, duration: 0.65 }}>
+              {slide.title}
+            </motion.h1>
+
+            <motion.p className="hero-sub"
+              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.42, duration: 0.65 }}>
+              {slide.sub}
+            </motion.p>
+
+            <motion.div className="hero-ctas"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.56, duration: 0.65 }}>
+              <Link to={slide.cta1.to} className="btn btn-hero-primary">
+                {slide.cta1.label} <ArrowRight size={17} />
+              </Link>
+              <Link to={slide.cta2.to} className="btn btn-hero-outline">
+                {slide.cta2.label}
+              </Link>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* ── Slider Controls ── */}
+      <button className="slider-arrow slider-prev" onClick={prev} aria-label="Previous slide">
+        <ChevronLeft size={22} />
+      </button>
+      <button className="slider-arrow slider-next" onClick={next} aria-label="Next slide">
+        <ChevronRight size={22} />
+      </button>
+
+      {/* Dots + counter */}
+      <div className="slider-ui">
+        <div className="slider-dots">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              className={`sdot${i === current ? ' active' : ''}`}
+              onClick={() => { clearInterval(timerRef.current); goTo(i, i > current ? 1 : -1) }}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
+        <div className="slider-counter">
+          <span className="sc-cur">{String(current + 1).padStart(2, '0')}</span>
+          <span className="sc-sep"> / </span>
+          <span className="sc-tot">{String(heroSlides.length).padStart(2, '0')}</span>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="slider-progress">
+        <div className="slider-bar" ref={barRef} />
+      </div>
+
+      {/* Stats bar */}
+      <div className="hero-stats-bar glass">
+        <StatItem num={30} suffix="+" label="Years of Excellence"  delay={0.4} />
+        <div className="stat-sep" />
+        <StatItem num={3}         label="Office Locations"         delay={0.5} />
+        <div className="stat-sep" />
+        <StatItem num={500} suffix="+" label="Cases Handled"       delay={0.6} />
+        <div className="stat-sep" />
+        <StatItem num={3}         label="Practice Areas"           delay={0.7} />
+      </div>
+
+      {/* Scroll hint */}
+      <div className="hero-scroll">
+        <span>Scroll</span>
+        <div className="hero-scroll-line" />
+      </div>
+    </section>
+  )
+}
+
+/* ═══════════════════ PRACTICE CARDS ═══════════════════ */
 const practiceCards = [
   {
     icon: Scale,
@@ -68,7 +273,7 @@ const practiceCards = [
     title: 'General Practice',
     desc: 'Comprehensive legal services across civil litigation, criminal law, family law, real estate, and public law.',
     items: ['Arbitration & Civil Litigation', 'Criminal Law', 'Family Law & Wills', 'Real Estate & Construction'],
-    color: '#2a8fa8',
+    color: '#3db5cf',
   },
   {
     icon: Briefcase,
@@ -76,7 +281,7 @@ const practiceCards = [
     title: 'Business / Commercial Law',
     desc: 'Expert counsel for corporations navigating complex commercial, international, and financial legal matters.',
     items: ['Mergers & Acquisitions', 'Intellectual Property', 'Banking & Finance', 'Foreign Direct Investment'],
-    color: '#1e6e82',
+    color: '#7ed8e8',
     featured: true,
   },
   {
@@ -90,73 +295,20 @@ const practiceCards = [
 ]
 
 const whyItems = [
-  { icon: Star, title: 'Excellence', text: 'Completely confidential, reliable and trustworthy — delivering superior legal expertise at every matter.' },
+  { icon: Star,   title: 'Excellence',       text: 'Completely confidential, reliable and trustworthy — delivering superior legal expertise at every matter.' },
   { icon: Shield, title: 'Ethical Standards', text: 'Unwaveringly upholding the ethical standards of the profession while advancing the legal society.' },
-  { icon: Globe, title: 'Global Perspective', text: 'Assisting local clients in global pursuits and foreign clients in structuring their Nigerian interests.' },
-  { icon: Users, title: 'Client Focus', text: 'Longstanding client relationships built on intimate understanding of your business and strategic objectives.' },
+  { icon: Globe,  title: 'Global Perspective',text: 'Assisting local clients in global pursuits and foreign clients in structuring their Nigerian interests.' },
+  { icon: Users,  title: 'Client Focus',      text: 'Longstanding client relationships built on intimate understanding of your business and strategic objectives.' },
 ]
 
+/* ═══════════════════ MAIN COMPONENT ═══════════════════ */
 export default function Home() {
   return (
     <PageTransition variant="fadeScale">
       <div className="home-page">
 
-        {/* ══ HERO ══ */}
-        <section className="home-hero">
-          <div className="home-hero-bg">
-            <img src="/hero-bg.png" alt="" className="home-hero-img" />
-            <div className="home-hero-overlay" />
-            {/* Animated orbs */}
-            <div className="hero-orb hero-orb-1" />
-            <div className="hero-orb hero-orb-2" />
-          </div>
-
-          <div className="home-hero-content container">
-            <motion.div className="hero-badge glass"
-              variants={fadeUp} initial="initial" animate="animate" custom={0}>
-              Exclusive Legal Practice · Est. 1989
-            </motion.div>
-
-            <motion.h1 className="hero-title"
-              variants={fadeUp} initial="initial" animate="animate" custom={1}>
-              Excellence in Law.<br />
-              <span className="hero-title-accent">Unparalleled</span> Counsel.
-            </motion.h1>
-
-            <motion.p className="hero-sub"
-              variants={fadeUp} initial="initial" animate="animate" custom={2}>
-              Ezeobi &amp; Partners is a distinguished Nigerian law firm born from the need for
-              a truly empowered and exceedingly competent legal practice — offering specialized
-              knowledge and personalised service to clients across Nigeria, Africa, and the World.
-            </motion.p>
-
-            <motion.div className="hero-ctas"
-              variants={fadeUp} initial="initial" animate="animate" custom={3}>
-              <Link to="/practice" className="btn btn-primary">
-                Our Practice Areas <ArrowRight size={17} />
-              </Link>
-              <Link to="/contact" className="btn btn-glass">
-                Get In Touch
-              </Link>
-            </motion.div>
-          </div>
-
-          {/* Stats bar */}
-          <div className="hero-stats-bar glass">
-            <StatItem num={30} suffix="+" label="Years of Excellence" delay={0.4} />
-            <div className="stat-sep" />
-            <StatItem num={3} label="Office Locations" delay={0.5} />
-            <div className="stat-sep" />
-            <StatItem num={500} suffix="+" label="Cases Handled" delay={0.6} />
-            <div className="stat-sep" />
-            <StatItem num={3} label="Practice Areas" delay={0.7} />
-          </div>
-
-          <div className="hero-scroll">
-            <span>Scroll</span>
-            <div className="hero-scroll-line" />
-          </div>
-        </section>
+        {/* ══ HERO SLIDER ══ */}
+        <HeroSlider />
 
         {/* ══ ABOUT STRIP ══ */}
         <section className="home-about section-shell">
@@ -208,7 +360,11 @@ export default function Home() {
         {/* ══ PRACTICE AREAS ══ */}
         <section className="home-practice section-shell">
           <div className="practice-dark-bg" />
-          <div className="container">
+          {/* Legal icons for dark section */}
+          <div className="practice-icons-layer">
+            <LegalIcons />
+          </div>
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <Reveal className="grid-center" style={{ marginBottom: '60px' }}>
               <span className="section-tag">What We Do</span>
               <h2 className="section-title light">Our Practice <span className="accent">Areas</span></h2>
@@ -283,10 +439,11 @@ export default function Home() {
         {/* ══ MISSION QUOTE ══ */}
         <section className="home-mission section-shell">
           <div className="mission-bg-overlay" />
-          <div className="container">
+          <LegalIcons />
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <Reveal>
               <div className="mission-inner glass">
-                <div className="mission-quote-mark">"</div>
+                <div className="mission-quote-mark">&ldquo;</div>
                 <blockquote className="mission-quote">
                   We wish to remain a leading law firm committed to the highest standards of service
                   excellence, truly representative of the demographics of Nigeria — continuously
@@ -355,7 +512,8 @@ export default function Home() {
         {/* ══ CTA BANNER ══ */}
         <section className="home-cta">
           <div className="cta-bg-overlay" />
-          <Reveal>
+          <LegalIcons />
+          <Reveal style={{ position: 'relative', zIndex: 2 }}>
             <div className="container">
               <div className="cta-inner glass">
                 <h2 className="cta-title">Ready to Discuss Your Legal Matter?</h2>
@@ -364,7 +522,7 @@ export default function Home() {
                   tailored to your unique situation.
                 </p>
                 <div className="cta-actions">
-                  <Link to="/contact" className="btn btn-primary">
+                  <Link to="/contact" className="btn btn-hero-primary">
                     Contact Us Today <ArrowRight size={17} />
                   </Link>
                   <a href="tel:+2348177744009" className="btn btn-glass">
