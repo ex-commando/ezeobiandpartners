@@ -46,9 +46,9 @@ export default function Contact() {
 
   function validate(data) {
     const errs = {}
-    if (!data.from_name.trim()) errs.from_name = 'Name is required'
-    if (!data.from_email.trim()) errs.from_email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.from_email)) errs.from_email = 'Enter a valid email'
+    if (!data.name.trim()) errs.name = 'Name is required'
+    if (!data.email.trim()) errs.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = 'Enter a valid email'
     if (!data.message.trim()) errs.message = 'Message is required'
     return errs
   }
@@ -57,12 +57,13 @@ export default function Contact() {
     e.preventDefault()
     const form = formRef.current
     const data = {
-      from_name: form.from_name.value,
-      from_email: form.from_email.value,
+      name: form.from_name.value,
+      email: form.from_email.value,
       phone: form.phone.value,
-      practice_area: form.practice_area.value,
+      service_required: form.practice_area.value,
       message: form.message.value,
-      to_email: 'info@ezeobiandpartners.com',
+      _subject: 'New Legal Enquiry from Ezeobi & Partners Website',
+      _template: 'box'
     }
     const errs = validate(data)
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
@@ -70,11 +71,23 @@ export default function Contact() {
     setStatus('loading')
 
     try {
-      await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form, EMAILJS_PUBLIC_KEY)
-      setStatus('success')
-      form.reset()
+      const response = await fetch('https://formsubmit.co/ajax/info@ezeobiandpartners.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+
+      if (response.ok) {
+        setStatus('success')
+        form.reset()
+      } else {
+        throw new Error('Network response was not ok')
+      }
     } catch (err) {
-      console.error('EmailJS error:', err)
+      console.error('FormSubmit error:', err)
       setStatus('error')
     }
   }
@@ -184,18 +197,21 @@ export default function Contact() {
                   )}
 
                   <form ref={formRef} onSubmit={handleSubmit} noValidate className="contact-form">
+                    <input type="text" name="_honey" style={{ display: 'none' }} />
+                    <input type="hidden" name="_captcha" value="false" />
+
                     <div className="form-row">
-                      <div className={`form-group${errors.from_name ? ' has-error' : ''}`}>
+                      <div className={`form-group${errors.name ? ' has-error' : ''}`}>
                         <label htmlFor="from_name">Full Name *</label>
                         <input type="text" id="from_name" name="from_name"
-                          placeholder="e.g. Emeka Okafor" onChange={() => setErrors(e => ({ ...e, from_name: '' }))} />
-                        {errors.from_name && <span className="field-error">{errors.from_name}</span>}
+                          placeholder="e.g. Emeka Okafor" onChange={() => setErrors(e => ({ ...e, name: '' }))} />
+                        {errors.name && <span className="field-error">{errors.name}</span>}
                       </div>
-                      <div className={`form-group${errors.from_email ? ' has-error' : ''}`}>
+                      <div className={`form-group${errors.email ? ' has-error' : ''}`}>
                         <label htmlFor="from_email">Email Address *</label>
                         <input type="email" id="from_email" name="from_email"
-                          placeholder="your@email.com" onChange={() => setErrors(e => ({ ...e, from_email: '' }))} />
-                        {errors.from_email && <span className="field-error">{errors.from_email}</span>}
+                          placeholder="your@email.com" onChange={() => setErrors(e => ({ ...e, email: '' }))} />
+                        {errors.email && <span className="field-error">{errors.email}</span>}
                       </div>
                     </div>
 
@@ -205,34 +221,50 @@ export default function Contact() {
                         <input type="tel" id="phone" name="phone" placeholder="+234 000 000 0000" />
                       </div>
                       <div className="form-group">
-                        <label htmlFor="practice_area">Practice Area</label>
-                        <select id="practice_area" name="practice_area">
-                          <option value="">Select area of interest</option>
-                          <option value="General Practice">General Practice</option>
-                          <option value="Business / Commercial Law">Business / Commercial Law</option>
-                          <option value="Energy & Natural Resources">Energy &amp; Natural Resources</option>
-                          <option value="Other">Other</option>
+                        <label htmlFor="practice_area">Legal Service Required</label>
+                        <select id="practice_area" name="practice_area" defaultValue="">
+                          <option value="" disabled>Select a specific area...</option>
+                          <optgroup label="General Practice">
+                            <option value="General - Generic Enquiry">General Enquiry</option>
+                            <option value="General - Arbitration & Civil Litigation">Arbitration & Civil Litigation</option>
+                            <option value="General - Criminal Law">Criminal Law</option>
+                            <option value="General - Family Law & Wills">Family Law & Wills</option>
+                            <option value="General - Real Estate & Construction">Real Estate & Construction</option>
+                          </optgroup>
+                          <optgroup label="Business / Commercial Law">
+                            <option value="Commercial - Generic Enquiry">General Commercial Enquiry</option>
+                            <option value="Commercial - Mergers & Acquisitions">Mergers & Acquisitions</option>
+                            <option value="Commercial - Intellectual Property">Intellectual Property</option>
+                            <option value="Commercial - Banking & Finance">Banking & Finance</option>
+                            <option value="Commercial - Foreign Direct Investment">Foreign Direct Investment</option>
+                          </optgroup>
+                          <optgroup label="Energy & Natural Resources">
+                            <option value="Energy - Generic Enquiry">General Energy Enquiry</option>
+                            <option value="Energy - Oil & Gas Law">Oil & Gas Law</option>
+                            <option value="Energy - Electricity Law">Electricity Law</option>
+                            <option value="Energy - Mining & Natural Resources">Mining & Natural Resources</option>
+                          </optgroup>
+                          <optgroup label="Other">
+                            <option value="Other / Not Listed">Other Legal Matter</option>
+                          </optgroup>
                         </select>
                       </div>
                     </div>
 
                     <div className={`form-group${errors.message ? ' has-error' : ''}`}>
                       <label htmlFor="message">Your Message *</label>
-                      <textarea id="message" name="message" rows={5}
+                      <textarea id="message" name="message" rows={6}
                         placeholder="Please briefly describe your legal matter or enquiry..."
                         onChange={() => setErrors(e => ({ ...e, message: '' }))} />
                       {errors.message && <span className="field-error">{errors.message}</span>}
                     </div>
 
-                    {/* Hidden field for recipient */}
-                    <input type="hidden" name="to_email" value="info@ezeobiandpartners.com" />
-
                     <button type="submit" className="btn btn-primary form-submit-btn"
                       disabled={status === 'loading'}>
                       {status === 'loading' ? (
-                        <>Sending… <span className="spinner" /></>
+                        <>Sending Request… <span className="spinner" /></>
                       ) : (
-                        <>Send Message <Send size={16} /></>
+                        <>Submit Enquiry <Send size={16} /></>
                       )}
                     </button>
 
