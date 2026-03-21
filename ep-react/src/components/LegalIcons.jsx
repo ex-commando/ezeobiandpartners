@@ -75,23 +75,29 @@ const ShieldIcon = () => (
   </svg>
 )
 
+/* 12 icons spaced nicely over the viewport width and height */
 const icons = [
-  { el: <ScaleIcon />,   top: '12%', left: '6%',  size: 58, dur: 9,  delay: 0,    opacity: 0.07 },
-  { el: <GavelIcon />,   top: '22%', right: '7%', size: 48, dur: 12, delay: 1.5,  opacity: 0.06 },
-  { el: <ScrollIcon />,  top: '55%', left: '4%',  size: 44, dur: 10, delay: 0.8,  opacity: 0.06 },
-  { el: <ColumnsIcon />, top: '70%', right: '5%', size: 62, dur: 14, delay: 2,    opacity: 0.05 },
-  { el: <BookIcon />,    top: '38%', left: '8%',  size: 40, dur: 11, delay: 3,    opacity: 0.06 },
-  { el: <ShieldIcon />,  top: '80%', left: '50%', size: 46, dur: 13, delay: 1,    opacity: 0.05 },
-  { el: <ScaleIcon />,   top: '8%',  right: '15%',size: 36, dur: 8,  delay: 4,    opacity: 0.05 },
-  { el: <GavelIcon />,   top: '60%', right: '12%',size: 38, dur: 15, delay: 2.5,  opacity: 0.04 },
+  { id: 1,  el: <ScaleIcon />,   top: '10%', left: '5%',  size: 70, dur: 12, delay: 0,    opacity: 0.08 },
+  { id: 2,  el: <GavelIcon />,   top: '18%', right: '8%', size: 60, dur: 14, delay: 2,    opacity: 0.07 },
+  { id: 3,  el: <ScrollIcon />,  top: '40%', left: '10%', size: 55, dur: 11, delay: 1,    opacity: 0.07 },
+  { id: 4,  el: <ColumnsIcon />, top: '35%', right: '12%',size: 80, dur: 16, delay: 3,    opacity: 0.06 },
+  { id: 5,  el: <BookIcon />,    top: '65%', left: '15%', size: 50, dur: 13, delay: 4,    opacity: 0.07 },
+  { id: 6,  el: <ShieldIcon />,  top: '75%', right: '20%',size: 65, dur: 15, delay: 1.5,  opacity: 0.06 },
+  { id: 7,  el: <ScaleIcon />,   top: '85%', left: '30%', size: 50, dur: 12, delay: 5,    opacity: 0.05 },
+  { id: 8,  el: <GavelIcon />,   top: '50%', right: '25%',size: 45, dur: 10, delay: 3.5,  opacity: 0.05 },
+  { id: 9,  el: <ColumnsIcon />, top: '25%', left: '40%', size: 70, dur: 14, delay: 0.5,  opacity: 0.04 },
+  { id: 10, el: <BookIcon />,    top: '90%', right: '8%', size: 55, dur: 13, delay: 2.5,  opacity: 0.06 },
 ]
 
-export default function LegalIcons() {
+export default function LegalIcons({ fixed = false }) {
+  // Use .fixed-global if mounted in App root
+  const containerClass = fixed ? 'legal-icons-layer fixed-global' : 'legal-icons-layer'
+
   return (
-    <div className="legal-icons-layer" aria-hidden="true">
-      {icons.map((ic, i) => (
+    <div className={containerClass} aria-hidden="true">
+      {icons.map((ic) => (
         <FloatIcon
-          key={i}
+          key={ic.id}
           icon={ic.el}
           style={{
             top: ic.top,

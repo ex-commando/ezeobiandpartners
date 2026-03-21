@@ -4,7 +4,6 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Scale, Briefcase, Zap, Shield, Star, Globe, Users,
          ChevronRight, ArrowRight, ChevronLeft } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
-import LegalIcons from '../components/LegalIcons'
 import './Home.css'
 
 /* ── animation helpers ── */
@@ -166,9 +165,6 @@ function HeroSlider() {
         <div className="hero-orb hero-orb-3" />
       </div>
 
-      {/* ── Legal icons layer ── */}
-      <LegalIcons />
-
       {/* ── Slide content ── */}
       <div className="home-hero-content container">
         <AnimatePresence mode="wait" custom={direction}>
@@ -202,10 +198,10 @@ function HeroSlider() {
             <motion.div className="hero-ctas"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.56, duration: 0.65 }}>
-              <Link to={slide.cta1.to} className="btn btn-hero-primary">
+              <Link to={slide.cta1.to} className="btn-hero btn-hero-primary">
                 {slide.cta1.label} <ArrowRight size={17} />
               </Link>
-              <Link to={slide.cta2.to} className="btn btn-hero-outline">
+              <Link to={slide.cta2.to} className="btn-hero btn-hero-outline">
                 {slide.cta2.label}
               </Link>
             </motion.div>
@@ -312,7 +308,7 @@ export default function Home() {
 
         {/* ══ ABOUT STRIP ══ */}
         <section className="home-about section-shell">
-          <div className="container">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <div className="home-about-grid">
               <Reveal className="home-about-img-wrap">
                 <img src="/about-img.png" alt="Ezeobi & Partners Office" className="home-about-img" />
@@ -360,10 +356,6 @@ export default function Home() {
         {/* ══ PRACTICE AREAS ══ */}
         <section className="home-practice section-shell">
           <div className="practice-dark-bg" />
-          {/* Legal icons for dark section */}
-          <div className="practice-icons-layer">
-            <LegalIcons />
-          </div>
           <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <Reveal className="grid-center" style={{ marginBottom: '60px' }}>
               <span className="section-tag">What We Do</span>
@@ -405,7 +397,7 @@ export default function Home() {
 
         {/* ══ WHY US ══ */}
         <section className="home-why section-shell">
-          <div className="container">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <Reveal className="grid-center" style={{ marginBottom: '56px' }}>
               <span className="section-tag section-tag-dark">Our Difference</span>
               <h2 className="section-title dark">
@@ -439,7 +431,6 @@ export default function Home() {
         {/* ══ MISSION QUOTE ══ */}
         <section className="home-mission section-shell">
           <div className="mission-bg-overlay" />
-          <LegalIcons />
           <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <Reveal>
               <div className="mission-inner glass">
@@ -470,7 +461,7 @@ export default function Home() {
 
         {/* ══ SOCIAL INVESTMENT ══ */}
         <section className="home-social section-shell">
-          <div className="container">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <div className="social-grid">
               <div className="social-text-col">
                 <Reveal>
@@ -512,7 +503,6 @@ export default function Home() {
         {/* ══ CTA BANNER ══ */}
         <section className="home-cta">
           <div className="cta-bg-overlay" />
-          <LegalIcons />
           <Reveal style={{ position: 'relative', zIndex: 2 }}>
             <div className="container">
               <div className="cta-inner glass">
@@ -522,10 +512,10 @@ export default function Home() {
                   tailored to your unique situation.
                 </p>
                 <div className="cta-actions">
-                  <Link to="/contact" className="btn btn-hero-primary">
+                  <Link to="/contact" className="btn-hero btn-hero-primary">
                     Contact Us Today <ArrowRight size={17} />
                   </Link>
-                  <a href="tel:+2348177744009" className="btn btn-glass">
+                  <a href="tel:+2348177744009" className="btn-hero btn-hero-outline">
                     +234 (817) 774 4009
                   </a>
                 </div>

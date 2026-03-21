@@ -7,6 +7,15 @@
   overflow: hidden;
 }
 
+.legal-icons-layer.fixed-global {
+  position: fixed;
+  z-index: 0; /* behind all page content */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
 .legal-float-icon {
   position: absolute;
   color: var(--teal-light);
@@ -21,7 +30,7 @@
 
 @keyframes legalFloat {
   0%   { transform: translateY(0px) rotate(0deg) scale(1); }
-  33%  { transform: translateY(-18px) rotate(4deg) scale(1.04); }
-  66%  { transform: translateY(-8px) rotate(-3deg) scale(0.97); }
+  33%  { transform: translateY(-30px) rotate(8deg) scale(1.05); }
+  66%  { transform: translateY(-15px) rotate(-6deg) scale(0.96); }
   100% { transform: translateY(0px) rotate(0deg) scale(1); }
 }
