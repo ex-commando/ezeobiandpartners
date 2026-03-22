@@ -66,7 +66,7 @@ function StatItem({ num, suffix = '', label, delay }) {
 /* ═══════════════════ HERO SLIDES DATA ═══════════════════ */
 const heroSlides = [
   {
-    bg: '/hero-bg.png',
+    bg: '/hero1.jpeg',
     badge: 'Exclusive Legal Practice · Est. 1989',
     title: <>Excellence in Law.<br /><em className="hero-title-accent">Unparalleled</em> Counsel.</>,
     sub: 'Ezeobi & Partners is a distinguished Nigerian law firm born from the need for a truly empowered and exceedingly competent legal practice — offering specialised knowledge and personalised service to clients across Nigeria, Africa, and the World.',
@@ -75,7 +75,7 @@ const heroSlides = [
     overlayClass: 'slide-ov-1',
   },
   {
-    bg: '/about-img.png',
+    bg: '/hero2.jpeg',
     badge: '30+ Years of Distinguished Service',
     title: <>A Legacy of<br />Legal <em className="hero-title-accent">Excellence.</em></>,
     sub: 'Founded by Chief Theodore A. Ezeobi SAN, our firm has forged an unrivalled reputation for rigorous advocacy, ethical practice, and genuine commitment to client success — a tradition we proudly uphold to this day.',
@@ -84,7 +84,7 @@ const heroSlides = [
     overlayClass: 'slide-ov-2',
   },
   {
-    bg: '/hero-bg.png',
+    bg: '/hero3.jpeg',
     badge: 'Offices in Abuja · Lagos · London',
     title: <>Global Reach.<br /><em className="hero-title-accent">Local</em> Expertise.</>,
     sub: 'With offices spanning Nigeria and the United Kingdom, Ezeobi & Partners delivers expert legal counsel in General Practice, Business & Commercial Law, and Energy & Natural Resources — wherever your matter demands.',
@@ -311,7 +311,7 @@ export default function Home() {
           <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <div className="home-about-grid">
               <Reveal className="home-about-img-wrap">
-                <img src="/about-img.png" alt="Ezeobi & Partners Office" className="home-about-img" />
+                <img src="/hero1.jpeg" alt="Ezeobi & Partners Office" className="home-about-img" />
                 <div className="home-about-badge glass">
                   <span className="badge-est">Est.</span>
                   <span className="badge-yr">1989</span>

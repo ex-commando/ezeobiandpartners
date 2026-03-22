@@ -1,1 +1,50 @@
-/* Footer extra — main styles in index.css */
+.footer {
+  background: var(--off-white) !important;
+  color: #000080 !important;
+  border-top: 2px solid #000080;
+}
+
+.footer-top {
+  border-bottom: 1px solid rgba(0, 0, 128, 0.1);
+}
+
+.footer-desc, 
+.footer-col h5, 
+.footer-links a, 
+.footer-contact-list li, 
+.footer-contact-list strong, 
+.footer-bottom p {
+  color: #000080 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.footer-tagline {
+  color: #000080 !important;
+  font-weight: 800 !important;
+}
+
+.footer-links a:hover, 
+.footer-contact-list a:hover {
+  color: #000080 !important;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  background: var(--off-white) !important;
+  padding: 32px 0 !important;
+}
+
+.footer-bottom a {
+  color: #000080 !important;
+  font-weight: 800 !important;
+}
+
+.footer-logo-img {
+  filter: none !important; /* Remove shadows for light background */
+}
+
+/* Ensure all links and text in footer are navy blue */
+.footer * {
+  color: #000080 !important;
+}

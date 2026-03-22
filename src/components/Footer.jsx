@@ -50,7 +50,8 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container">
           <p>© {year} Ezeobi &amp; Partners. All Rights Reserved. | Exclusive Legal Practice</p>
-          <p style={{ opacity: 0.6, fontSize: '0.75rem', marginTop: '4px' }}>
+          <p>Project developed by <a href="https://wa.me/2347068473984?text=i%20want%20o%20build%20a%20web%20project%20Francis,%20give%20me%20Quote" target="_blank" rel="noopener noreferrer"><strong>Fnets Technologies Ltd</strong></a>.</p>
+          <p>
             Abuja · Lagos · London
           </p>
         </div>
